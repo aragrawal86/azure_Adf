@@ -1,0 +1,16 @@
+{
+	"name": "DestinationDataset_fay",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Azure_sql_Connection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"table": "Test Table"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

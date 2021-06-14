@@ -1,0 +1,57 @@
+{
+	"name": "SourceDataset_fay",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blob_connection",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Storage Input FIle.txt",
+				"container": "input"
+			},
+			"columnDelimiter": "\t",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "S No.",
+				"type": "String"
+			},
+			{
+				"name": "Value Date",
+				"type": "String"
+			},
+			{
+				"name": "Transaction Date",
+				"type": "String"
+			},
+			{
+				"name": "Cheque Number",
+				"type": "String"
+			},
+			{
+				"name": "Transaction Remarks",
+				"type": "String"
+			},
+			{
+				"name": "Withdrawal Amount (INR )",
+				"type": "String"
+			},
+			{
+				"name": "Deposit Amount (INR )",
+				"type": "String"
+			},
+			{
+				"name": "Balance (INR )",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,162 @@
+{
+	"name": "copy_blob_to_sql",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_blob_to_sql",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "input//Storage Input FIle.txt"
+					},
+					{
+						"name": "Destination",
+						"value": ".Test Table"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 0
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"validateDataConsistency": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "S No.",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "S No.",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Value Date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Value Date",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Transaction Date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Transaction Date",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cheque Number",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cheque Number",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Transaction Remarks",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Transaction Remarks",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Withdrawal Amount (INR )",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Withdrawal Amount (INR )",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Deposit Amount (INR )",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Deposit Amount (INR )",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Balance (INR )",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Balance (INR )",
+									"type": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_fay",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_fay",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-06-14T15:24:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
