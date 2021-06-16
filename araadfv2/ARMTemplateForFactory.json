@@ -1,0 +1,348 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "araadfv2"
+		},
+		"Azure_sql_Connection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Azure_sql_Connection'"
+		},
+		"InputAzureBlobConnection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'InputAzureBlobConnection'"
+		},
+		"blob_connection_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'blob_connection'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/copy_blob_to_sql')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_blob_to_sql",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "input//Storage Input FIle.txt"
+							},
+							{
+								"name": "Destination",
+								"value": ".Test Table"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate"
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "S No.",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "S No.",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Value Date",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Value Date",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Transaction Date",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Transaction Date",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cheque Number",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cheque Number",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Transaction Remarks",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Transaction Remarks",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Withdrawal Amount (INR )",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Withdrawal Amount (INR )",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Deposit Amount (INR )",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Deposit Amount (INR )",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Balance (INR )",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Balance (INR )",
+											"type": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_fay",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_fay",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": [],
+				"lastPublishTime": "2021-06-14T15:24:17Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_fay')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_fay')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_fay')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Azure_sql_Connection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"table": "Test Table"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Azure_sql_Connection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InputData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "InputAzureBlobConnection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Storage Input FIle.txt",
+						"container": "input"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/InputAzureBlobConnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_fay')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "blob_connection",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Storage Input FIle.txt",
+						"container": "input"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "S No.",
+						"type": "String"
+					},
+					{
+						"name": "Value Date",
+						"type": "String"
+					},
+					{
+						"name": "Transaction Date",
+						"type": "String"
+					},
+					{
+						"name": "Cheque Number",
+						"type": "String"
+					},
+					{
+						"name": "Transaction Remarks",
+						"type": "String"
+					},
+					{
+						"name": "Withdrawal Amount (INR )",
+						"type": "String"
+					},
+					{
+						"name": "Deposit Amount (INR )",
+						"type": "String"
+					},
+					{
+						"name": "Balance (INR )",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/blob_connection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Azure_sql_Connection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('Azure_sql_Connection_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InputAzureBlobConnection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('InputAzureBlobConnection_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/blob_connection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('blob_connection_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
